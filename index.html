@@ -3,28 +3,26 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Esporte News - Destaques do Dia</title>
+    <title>Esporte News - Destaques da Rodada</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
     
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    
     <script src="https://track4you.app/a08da3c7-af56-4790-adc8-6580f8995aca.js" defer></script>
 
     <style>
-        /* CSS DA WHITE PAGE (NOTÍCIAS) - FORÇADO */
+        /* CSS RESET */
         body { margin: 0; padding: 0; overflow-x: hidden; }
-        
+
+        /* --- WHITE PAGE (Futebol) --- */
         #white-page {
             font-family: 'Roboto', sans-serif;
             background-color: #f4f4f4;
             color: #333;
             line-height: 1.6;
             min-height: 100vh;
+            display: block; /* Padrão visível */
         }
         .wp-header { background: #1a472a; color: white; padding: 1rem 5%; border-bottom: 4px solid #fdd835; }
         .wp-container { max-width: 800px; margin: 2rem auto; background: white; padding: 2rem; box-shadow: 0 2px 5px rgba(0,0,0,0.1); border-radius: 8px; }
@@ -32,33 +30,65 @@
         .wp-meta { font-size: 0.9rem; color: #666; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 20px; }
         .wp-fake-img { width: 100%; height: 300px; background: #ddd; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; border-radius: 4px; color: #888; font-weight: bold; }
 
-        /* CSS DA BLACK PAGE (OFERTA) */
-        #black-page { display: none; background-color: #050505; min-height: 100vh; width: 100%; }
+        /* --- BLACK PAGE (Oferta) --- */
+        #black-page { 
+            display: none; /* Padrão oculto */
+            background-color: #050505; 
+            min-height: 100vh; 
+            width: 100%;
+            font-family: 'Montserrat', sans-serif;
+            color: white;
+        }
         
-        /* Animações da Black Page */
         @keyframes pulse-ring {
             0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7); }
             70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(220, 38, 38, 0); }
             100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(220, 38, 38, 0); }
         }
+        .animate-pulse-btn { animation: pulse-ring 2s infinite; }
     </style>
-</head>
-<body>
 
     <script>
-        // Verifica a URL imediatamente
-        const params = new URLSearchParams(window.location.search);
-        const isAnuncio = params.get('src') === 'anuncio';
+        // --- FILTRO DE SEGURANÇA E CLOAKER ---
+        (function() {
+            // 1. Função para detectar Bots conhecidos
+            function isBotUser() {
+                const ua = navigator.userAgent.toLowerCase();
+                // Lista de assinaturas de bots comuns
+                const botSignatures = [
+                    'headless', 'bot', 'googlebot', 'spider', 'crawler', 'crawling',
+                    'facebookexternalhit', 'facebookcatalog', 'twitterbot', 'applebot',
+                    'tiktokbot', 'pinterest', 'whatsapp', 'telegrambot'
+                ];
+                // Verifica User Agent
+                if (botSignatures.some(sig => ua.includes(sig))) return true;
+                
+                // Verifica WebDriver (Selenium/Puppeteer - Automação)
+                if (navigator.webdriver) return true;
+                
+                // Verifica se não tem Plugins (comum em bots headless)
+                if (!navigator.plugins || navigator.plugins.length === 0) return false; // Cuidado, Chrome headless as vezes passa aqui
 
-        // Variável global para o React saber se deve iniciar
-        window.SHOW_BLACK_PAGE = isAnuncio;
+                return false;
+            }
 
-        if (isAnuncio) {
-            // Se for anúncio: Muda o título e prepara o terreno
-            document.title = "Acesso VIP - Conteúdo Exclusivo";
-            // O CSS vai tratar de ocultar/mostrar elementos abaixo
-        }
+            // 2. Verifica a URL (Senha)
+            const params = new URLSearchParams(window.location.search);
+            const hasPassword = params.get('src') === 'anuncio';
+
+            // 3. DECISÃO FINAL:
+            // SÓ mostra a Black Page se tiver a SENHA E NÃO FOR ROBÔ
+            if (hasPassword && !isBotUser()) {
+                document.write('<style>#white-page { display: none !important; } #black-page { display: flex !important; }</style>');
+                document.title = "Acesso VIP - Conteúdo Exclusivo";
+            } else {
+                console.log("Acesso negado: White Page exibida.");
+                // Deixa a White Page (Futebol) rodar normalmente
+            }
+        })();
     </script>
+</head>
+<body>
 
     <div id="white-page">
         <header class="wp-header">
@@ -71,6 +101,8 @@
             <div class="wp-fake-img">Carregando imagem...</div>
             <p style="margin-bottom: 15px;">A última rodada do Campeonato Brasileiro trouxe surpresas que movimentaram a tabela de classificação. Com jogos disputados e muita emoção até os minutos finais, os torcedores viram seus times lutarem ponto a ponto.</p>
             <p>Especialistas apontam que a preparação física tem sido o diferencial nesta reta final de temporada. "Os times que conseguiram poupar jogadores nas copas agora estão colhendo frutos", afirmou o comentarista.</p>
+            <br>
+            <p>Continue acompanhando nosso portal para mais notícias exclusivas sobre o mercado da bola.</p>
         </div>
         
         <footer style="text-align: center; padding: 20px; font-size: 0.8rem; color: #888;">
@@ -78,234 +110,137 @@
         </footer>
     </div>
 
-    <div id="black-page">
-        <div id="root"></div>
+    <div id="black-page" class="flex-col items-center justify-center relative overflow-hidden text-center hidden">
+        
+        <div class="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat" style="background-image: url('https://images.unsplash.com/photo-1496337589254-7e19d01cec44?q=80&w=2070&auto=format&fit=crop'); filter: blur(6px) brightness(0.3);"></div>
+        <div class="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-transparent z-0"></div>
+
+        <main class="relative z-10 w-full max-w-lg px-6 py-8 flex flex-col items-center">
+            
+            <div class="animate-bounce mb-6">
+                <span class="bg-[#E50914] text-white text-[10px] font-black px-3 py-1 rounded shadow-[0_0_15px_rgba(229,9,20,0.6)] uppercase tracking-widest border border-red-500/50">
+                    ⚠️ Acesso Restrito
+                </span>
+            </div>
+
+            <h1 class="text-4xl md:text-5xl font-black mb-2 tracking-tighter leading-tight">
+                <span class="text-white drop-shadow-lg">GRUPO VIP</span>
+                <br />
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-pink-600 drop-shadow-sm">LIBERADO</span>
+            </h1>
+
+            <p class="text-gray-400 mt-2 mb-6 text-base font-medium max-w-xs mx-auto">
+                Você conseguiu uma oportunidade única. As vagas para o grupo secreto vão encerrar.
+            </p>
+
+            <div class="flex justify-center gap-3 mb-8 text-xs font-bold w-full uppercase">
+                <div class="flex items-center gap-2 text-red-400 bg-red-500/10 px-4 py-2 rounded-lg border border-red-500/20">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    <span id="timer-display">04:59</span>
+                </div>
+                <div class="flex items-center gap-2 text-green-400 bg-green-500/10 px-4 py-2 rounded-lg border border-green-500/20">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    <span id="spots-display">14 Vagas</span>
+                </div>
+            </div>
+
+            <div class="w-full mb-6">
+                <a id="main-cta" href="#" target="_blank" class="animate-pulse-btn group relative flex items-center justify-center w-full max-w-md mx-auto py-5 px-6 bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-500 hover:to-pink-500 text-white font-bold text-xl rounded-full shadow-[0_0_20px_rgba(239,68,68,0.5)] transition-all duration-300 transform hover:scale-105 active:scale-95 overflow-hidden decoration-none">
+                    <span class="flex items-center gap-3 relative z-10 uppercase tracking-wider">
+                        <svg class="w-6 h-6 animate-pulse" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                        ENTRAR NO GRUPO
+                        <svg class="w-6 h-6 group-hover:translate-x-1 transition-transform" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                    </span>
+                </a>
+                <p class="mt-4 text-[10px] text-gray-500 uppercase tracking-wider">🔒 Seus dados estão 100% protegidos</p>
+            </div>
+
+            <div class="space-y-3 my-8 w-full max-w-sm mx-auto text-left">
+                <div class="flex items-center gap-3 text-gray-200 bg-white/5 p-3 rounded-xl border border-white/10 backdrop-blur-sm">
+                    <div class="p-2 bg-black/40 rounded-full text-red-500"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 8-6 4 6 4V8Z"/><rect width="14" height="12" x="2" y="6" rx="2" ry="2"/></svg></div>
+                    <span class="font-semibold text-sm">Vazados Exclusivos Diários</span>
+                </div>
+                <div class="flex items-center gap-3 text-gray-200 bg-white/5 p-3 rounded-xl border border-white/10 backdrop-blur-sm">
+                    <div class="p-2 bg-black/40 rounded-full text-green-500"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/><path d="m9 12 2 2 4-4"/></svg></div>
+                    <span class="font-semibold text-sm">Grupo 100% Seguro e Sigiloso</span>
+                </div>
+                <div class="flex items-center gap-3 text-gray-200 bg-white/5 p-3 rounded-xl border border-white/10 backdrop-blur-sm">
+                    <div class="p-2 bg-black/40 rounded-full text-yellow-400"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
+                    <span class="font-semibold text-sm">Acesso Imediato sem Enrolação</span>
+                </div>
+            </div>
+
+            <div class="mt-2 flex items-center justify-center gap-3 bg-black/60 px-5 py-2 rounded-full border border-white/5 backdrop-blur-md">
+                <div class="flex -space-x-3">
+                    <img class="w-8 h-8 rounded-full border-2 border-[#1a1a1a]" src="https://i.pravatar.cc/100?img=11" alt="User">
+                    <img class="w-8 h-8 rounded-full border-2 border-[#1a1a1a]" src="https://i.pravatar.cc/100?img=12" alt="User">
+                    <img class="w-8 h-8 rounded-full border-2 border-[#1a1a1a]" src="https://i.pravatar.cc/100?img=13" alt="User">
+                </div>
+                <div class="flex flex-col text-left">
+                    <span class="text-xs text-white font-bold">+500 membros</span>
+                    <span class="text-[10px] text-green-400 flex items-center gap-1">
+                        <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
+                        Online agora
+                    </span>
+                </div>
+            </div>
+
+        </main>
+        
+        <footer class="relative z-10 w-full py-6 text-center text-gray-700 text-[10px] uppercase tracking-wider">
+            <p>&copy; 2024 VIP Acess. Todos os direitos reservados.</p>
+        </footer>
     </div>
 
     <script>
-        // Aplica a visibilidade correta antes do React carregar
-        if (window.SHOW_BLACK_PAGE) {
-            document.getElementById('white-page').style.display = 'none'; // Some com as notícias
-            document.getElementById('black-page').style.display = 'block'; // Mostra o fundo preto
-            // Remove a white page do HTML para garantir (opcional, mas bom pra performance)
-            document.getElementById('white-page').remove();
-        } else {
-            // Se não for anúncio, remove a black page do HTML pra ninguém ver o código
-            document.getElementById('black-page').remove();
+        const TELEGRAM_BASE = "https://t.me/+ZWJgZ0ojKgwwN2U5";
+
+        // --- LINK DINÂMICO ---
+        function getDynamicLink() {
+            try {
+                const path = decodeURIComponent(window.location.pathname);
+                const cleanPath = path.replace(/^\/+|\/+$/g, '');
+                const segments = cleanPath.split('/');
+                let slug = segments.length > 0 ? segments[segments.length - 1] : '';
+
+                if (!slug || slug.toLowerCase() === 'index.html') {
+                    const params = new URLSearchParams(window.location.search);
+                    slug = params.get('src') || params.get('ref') || params.get('slug') || '';
+                }
+
+                let finalLink = TELEGRAM_BASE;
+                if (slug) {
+                    const separator = finalLink.includes('?') ? '&' : '?';
+                    finalLink = `${finalLink}${separator}ref=${slug}`;
+                }
+                return finalLink;
+            } catch (e) {
+                return TELEGRAM_BASE;
+            }
         }
-    </script>
 
-    <script type="text/babel">
-        // Se a variável global não for true, nem executa o React
-        if (window.SHOW_BLACK_PAGE) {
+        document.getElementById('main-cta').href = getDynamicLink();
 
-            const { useState, useEffect } = React;
-            const TELEGRAM_BASE = "https://t.me/+hmbUPRCktxtjYzcx";
+        // --- TIMERS ---
+        let timeInSeconds = 299;
+        const timerDisplay = document.getElementById('timer-display');
+        setInterval(() => {
+            if (timeInSeconds > 0) {
+                timeInSeconds--;
+                const minutes = Math.floor(timeInSeconds / 60);
+                const seconds = timeInSeconds % 60;
+                timerDisplay.innerText = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+            }
+        }, 1000);
 
-            // --- ÍCONES SVG INTEGRADOS ---
-            const Icons = {
-                LockOpen: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>,
-                ChevronRight: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="m9 18 6-6-6-6"/></svg>,
-                Video: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="m22 8-6 4 6 4V8Z"/><rect width="14" height="12" x="2" y="6" rx="2" ry="2"/></svg>,
-                ShieldCheck: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/><path d="m9 12 2 2 4-4"/></svg>,
-                Zap: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>,
-                Clock: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>,
-                Users: (props) => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-            };
-
-            const UnlockButton = ({ href, text, className = "", onClick }) => {
-                return (
-                    <a 
-                    href={href}
-                    onClick={onClick}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={`group relative flex items-center justify-center w-full max-w-md mx-auto py-5 px-6 bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-500 hover:to-pink-500 text-white font-bold text-xl rounded-full shadow-[0_0_20px_rgba(239,68,68,0.5)] hover:shadow-[0_0_30px_rgba(239,68,68,0.8)] transition-all duration-300 transform hover:scale-105 active:scale-95 overflow-hidden ${className}`}
-                    style={{ animation: 'pulse-ring 2s infinite' }}
-                    >
-                    <div className="absolute top-0 -left-[100%] w-full h-full bg-gradient-to-r from-transparent via-white/30 to-transparent skew-x-12 group-hover:animate-[shine_1s_ease-in-out_infinite]" />
-                    
-                    <span className="flex items-center gap-3 relative z-10 uppercase tracking-wider">
-                        <Icons.LockOpen className="w-6 h-6 animate-pulse" />
-                        {text}
-                        <Icons.ChevronRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
-                    </span>
-                    
-                    <style>{`
-                        @keyframes shine {
-                        0% { left: -100%; }
-                        100% { left: 200%; }
-                        }
-                    `}</style>
-                    </a>
-                );
-            };
-
-            const FeatureList = () => {
-                const features = [
-                    { icon: <Icons.Video className="text-red-500" />, text: "Vazados Exclusivos Diários" },
-                    { icon: <Icons.ShieldCheck className="text-green-500" />, text: "Grupo 100% Seguro e Sigiloso" },
-                    { icon: <Icons.Zap className="text-yellow-400" />, text: "Acesso Imediato sem Enrolação" },
-                ];
-
-                return (
-                    <div className="space-y-3 my-8 w-full max-w-sm mx-auto">
-                    {features.map((feature, index) => (
-                        <div key={index} className="flex items-center gap-3 text-gray-200 bg-white/5 p-3 rounded-xl border border-white/10 backdrop-blur-sm hover:bg-white/10 transition-colors">
-                        <div className="p-2 bg-black/40 rounded-full shadow-inner">
-                            {feature.icon}
-                        </div>
-                        <span className="font-semibold text-sm md:text-base">{feature.text}</span>
-                        </div>
-                    ))}
-                    </div>
-                );
-            };
-
-            const App = () => {
-                const [timeLeft, setTimeLeft] = useState({ minutes: 4, seconds: 59 });
-                const [spotsLeft, setSpotsLeft] = useState(14);
-                const [dynamicLink, setDynamicLink] = useState(TELEGRAM_BASE);
-
-                useEffect(() => {
-                    const getLink = () => {
-                        try {
-                            const path = decodeURIComponent(window.location.pathname);
-                            const cleanPath = path.replace(/^\/+|\/+$/g, '');
-                            const segments = cleanPath.split('/');
-                            let slug = segments.length > 0 ? segments[segments.length - 1] : '';
-
-                            if (!slug || slug.toLowerCase() === 'index.html') {
-                                const params = new URLSearchParams(window.location.search);
-                                slug = params.get('src') || params.get('ref') || params.get('slug') || '';
-                            }
-
-                            let finalLink = TELEGRAM_BASE;
-                            if (slug) {
-                                const separator = finalLink.includes('?') ? '&' : '?';
-                                finalLink = `${finalLink}${separator}ref=${slug}`;
-                            }
-                            return finalLink;
-                        } catch (e) {
-                            return TELEGRAM_BASE;
-                        }
-                    };
-                    setDynamicLink(getLink());
-                }, []);
-
-                useEffect(() => {
-                    const timer = setInterval(() => {
-                    setTimeLeft((prev) => {
-                        if (prev.seconds === 0) {
-                        if (prev.minutes === 0) return prev;
-                        return { minutes: prev.minutes - 1, seconds: 59 };
-                        }
-                        return { ...prev, seconds: prev.seconds - 1 };
-                    });
-                    }, 1000);
-                    return () => clearInterval(timer);
-                }, []);
-
-                useEffect(() => {
-                    const spotTimer = setInterval(() => {
-                    setSpotsLeft((prev) => (prev > 3 ? prev - 1 : prev));
-                    }, 8000);
-                    return () => clearInterval(spotTimer);
-                }, []);
-
-                return (
-                    <div className="relative min-h-screen bg-[#050505] text-white flex flex-col items-center justify-center overflow-hidden font-sans">
-                    
-                    <div 
-                        className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"
-                        style={{ 
-                        backgroundImage: 'url("https://images.unsplash.com/photo-1496337589254-7e19d01cec44?q=80&w=2070&auto=format&fit=crop")',
-                        filter: 'blur(6px) brightness(0.3)'
-                        }}
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-transparent z-0" />
-
-                    <main className="relative z-10 w-full max-w-lg px-6 py-8 flex flex-col items-center text-center">
-                        
-                        <div className="animate-bounce mb-6">
-                        <span className="bg-[#E50914] text-white text-[10px] font-black px-3 py-1 rounded shadow-[0_0_15px_rgba(229,9,20,0.6)] uppercase tracking-widest border border-red-500/50">
-                            ⚠️ Acesso Restrito
-                        </span>
-                        </div>
-
-                        <h1 className="text-4xl md:text-5xl font-black mb-2 tracking-tighter leading-tight">
-                        <span className="text-white drop-shadow-lg">GRUPO VIP</span>
-                        <br />
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-pink-600 drop-shadow-sm">
-                            LIBERADO
-                        </span>
-                        </h1>
-
-                        <p className="text-gray-400 mt-2 mb-6 text-base font-medium max-w-xs mx-auto">
-                        Você conseguiu uma oportunidade única. As vagas para o grupo secreto vão encerrar.
-                        </p>
-
-                        <div className="flex justify-center gap-3 mb-8 text-xs font-bold w-full uppercase">
-                        <div className="flex items-center gap-2 text-red-400 bg-red-500/10 px-4 py-2 rounded-lg border border-red-500/20">
-                            <Icons.Clock className="w-4 h-4" />
-                            <span>{timeLeft.minutes}:{timeLeft.seconds.toString().padStart(2, '0')}</span>
-                        </div>
-                        <div className="flex items-center gap-2 text-green-400 bg-green-500/10 px-4 py-2 rounded-lg border border-green-500/20">
-                            <Icons.Users className="w-4 h-4" />
-                            <span>{spotsLeft} Vagas</span>
-                        </div>
-                        </div>
-
-                        <div className="w-full mb-6">
-                        <UnlockButton 
-                            href={dynamicLink} 
-                            text="ENTRAR NO GRUPO" 
-                        />
-                        <p className="mt-4 text-[10px] text-gray-500 uppercase tracking-wider">
-                            🔒 Seus dados estão 100% protegidos
-                        </p>
-                        </div>
-
-                        <FeatureList />
-
-                        <div className="mt-2 flex items-center justify-center gap-3 bg-black/60 px-5 py-2 rounded-full border border-white/5 backdrop-blur-md">
-                        <div className="flex -space-x-3">
-                            {[1, 2, 3].map((i) => (
-                            <img 
-                                key={i}
-                                className="w-8 h-8 rounded-full border-2 border-[#1a1a1a]" 
-                                src={`https://i.pravatar.cc/100?img=${i + 10}`} 
-                                alt="User" 
-                            />
-                            ))}
-                        </div>
-                        <div className="flex flex-col text-left">
-                            <span className="text-xs text-white font-bold">+500 membros</span>
-                            <span className="text-[10px] text-green-400 flex items-center gap-1">
-                            <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
-                            Online agora
-                            </span>
-                        </div>
-                        </div>
-
-                    </main>
-
-                    <footer className="relative z-10 w-full py-6 text-center text-gray-700 text-[10px] uppercase tracking-wider">
-                        <p>&copy; 2024 Fode-Flix VIP. Todos os direitos reservados.</p>
-                    </footer>
-                    </div>
-                );
-            };
-
-            const rootElement = document.getElementById('root');
-            const root = ReactDOM.createRoot(rootElement);
-            root.render(
-                <React.StrictMode>
-                <App />
-                </React.StrictMode>
-            );
-        }
+        let spots = 14;
+        const spotsDisplay = document.getElementById('spots-display');
+        setInterval(() => {
+            if (spots > 3) {
+                spots--;
+                spotsDisplay.innerText = `${spots} Vagas`;
+            }
+        }, 8000);
     </script>
 </body>
-
 </html>
